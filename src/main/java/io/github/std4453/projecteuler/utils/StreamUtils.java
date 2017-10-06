@@ -6,7 +6,6 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  *
@@ -225,9 +224,7 @@ public class StreamUtils {
 	 * {@link Spliterator#ORDERED ORDERED}.
 	 */
 	public static <T> Stream<T> asStream(Iterator<T> iterator) {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterator,
-				Spliterator.IMMUTABLE | Spliterator.ORDERED);
-		return StreamSupport.stream(spliterator, false);
+		return Stream.generate(iterator::next);
 	}
 
 	/**
@@ -236,8 +233,6 @@ public class StreamUtils {
 	 * {@link Spliterator#ORDERED ORDERED}.
 	 */
 	public static IntStream asStream(PrimitiveIterator.OfInt iterator) {
-		Spliterator.OfInt spliterator = Spliterators.spliteratorUnknownSize(iterator,
-				Spliterator.IMMUTABLE | Spliterator.ORDERED);
-		return StreamSupport.intStream(spliterator, false);
+		return IntStream.generate(iterator::nextInt);
 	}
 }
