@@ -26,6 +26,7 @@ public class Problem003 {
 	// root. (no need to explain, is there?) So if we divide all the prime factors
 	// under the square root of n, the remaining number must either be 1 or that only
 	// big prime factor, and that's exactly our final answer does.
+
 	public static void main(String[] args) {
 		long sqrt = Math.round(Math.sqrt(N));  // square root
 		System.out.println(limitUntil(NumberTheory.longPrimesStream(),  // all primes
@@ -62,7 +63,7 @@ public class Problem003 {
 		//			.filter(p -> n == 1)  // until n gets 1
 		//			.findFirst()  // that's the maximum prime factor
 		//			.ifPresent(System.out::println);  // print the result
-		// It works for N, but for some Ns (like 200000146) it will fail.
+		// It works for N, but for some Ns (like 200000146) it will run very very slowly.
 		// What's its problem? Try to answer without actually running the program.
 		// (I recommend looking into NumberTheory.longPrimesStream())
 	}

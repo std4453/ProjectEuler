@@ -1,5 +1,7 @@
 package io.github.std4453.projecteuler.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.stream.IntStream;
@@ -14,10 +16,15 @@ public class NumberTheory {
 	 * since a mutable field is required in this case, we use a wrapper.
 	 */
 	private static class IntPrimeStreamWrapper {
-		private IntPredicate isPrime = x -> true;
+		private List<Integer> resolvedPrimes = new ArrayList<>();
+		private IntPredicate isPrime = x -> {
+			for (Integer prime : resolvedPrimes)
+				if (x % prime == 0) return false;
+			return true;
+		};
 		private IntStream primes = IntStream.iterate(2, i -> i + 1)
 				.filter(i -> isPrime.test(i))
-				.peek(i -> isPrime = isPrime.and(v -> v % i != 0));
+				.peek(resolvedPrimes::add);
 
 		IntStream getPrimes() {
 			return primes;
@@ -30,10 +37,15 @@ public class NumberTheory {
 	 * @see IntPrimeStreamWrapper
 	 */
 	private static class LongPrimeStreamWrapper {
-		private LongPredicate isPrime = x -> true;
+		private List<Long> resolvedPrimes = new ArrayList<>();
+		private LongPredicate isPrime = x -> {
+			for (Long prime : resolvedPrimes)
+				if (x % prime == 0) return false;
+			return true;
+		};
 		private LongStream primes = LongStream.iterate(2, i -> i + 1)
 				.filter(i -> isPrime.test(i))
-				.peek(i -> isPrime = isPrime.and(v -> v % i != 0));
+				.peek(resolvedPrimes::add);
 
 		LongStream getPrimes() {
 			return primes;
