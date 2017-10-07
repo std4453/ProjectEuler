@@ -3,9 +3,12 @@ package io.github.std4453.projecteuler.utils;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.IntPredicate;
+import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  *
@@ -156,6 +159,48 @@ public class StreamUtils {
 	}
 
 	/**
+	 * {@code long} version of {@link LimitUntilIterator}.
+	 */
+	private static final class LongLimitUntilIterator
+			implements PrimitiveIterator.OfLong {
+		private OfLong iterator;
+		private LongPredicate predicate;
+
+		private long cache;
+		private boolean hasNext;
+
+		LongLimitUntilIterator(LongStream stream, LongPredicate predicate) {
+			this.iterator = stream.iterator();
+			this.predicate = predicate;
+
+			this.updateCache();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.hasNext;
+		}
+
+		@Override
+		public long nextLong() {
+			if (!this.hasNext) throw new NoSuchElementException();
+			long next = this.cache;
+			this.updateCache();
+			return next;
+		}
+
+		private void updateCache() {
+			if (!this.iterator.hasNext()) {
+				this.hasNext = false;
+				return;
+			}
+
+			this.cache = this.iterator.next();
+			this.hasNext = !predicate.test(this.cache);
+		}
+	}
+
+	/**
 	 * Return a {@link Stream} which is the merges the elements of two
 	 * {@link Stream Streams}.<br />
 	 * Let the <i>front-most element</i> of a {@link Stream} be the first element
@@ -219,20 +264,44 @@ public class StreamUtils {
 	}
 
 	/**
+	 * {@code long} version of {@link #limitUntil(Stream, Predicate)}.
+	 *
+	 * @see #limitUntil(Stream, Predicate)
+	 */
+	public static LongStream limitUntil(LongStream s, LongPredicate p) {
+		return asStream(new LongLimitUntilIterator(s, p));
+	}
+
+	/**
 	 * Convert {@link Iterator} to {@link Stream}.<br />
-	 * The converted {@link Stream} is {@link Spliterator#IMMUTABLE IMMUTABLE} and
-	 * {@link Spliterator#ORDERED ORDERED}.
+	 * The returned {@link Stream} is {@link Spliterator#IMMUTABLE IMMUTABLE} and
+	 * {@link Spliterator#ORDERED ORDERED} and SEQUENTIAL.
 	 */
 	public static <T> Stream<T> asStream(Iterator<T> iterator) {
-		return Stream.generate(iterator::next);
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterator,
+				Spliterator.IMMUTABLE | Spliterator.ORDERED);
+		return StreamSupport.stream(spliterator, false);
 	}
 
 	/**
 	 * Convert {@link PrimitiveIterator.OfInt} to {@link IntStream}.<br />
-	 * The converted {@link Stream} is {@link Spliterator#IMMUTABLE IMMUTABLE} and
-	 * {@link Spliterator#ORDERED ORDERED}.
+	 * The returned {@link Stream} is {@link Spliterator#IMMUTABLE IMMUTABLE} and
+	 * {@link Spliterator#ORDERED ORDERED} and SEQUENTIAL.
 	 */
 	public static IntStream asStream(PrimitiveIterator.OfInt iterator) {
-		return IntStream.generate(iterator::nextInt);
+		Spliterator.OfInt spliterator = Spliterators.spliteratorUnknownSize(iterator,
+				Spliterator.IMMUTABLE | Spliterator.ORDERED);
+		return StreamSupport.intStream(spliterator, false);
+	}
+
+	/**
+	 * Convert {@link PrimitiveIterator.OfLong} to {@link LongStream}.<br />
+	 * The returned {@link Stream} is {@link Spliterator#IMMUTABLE IMMUTABLE} and
+	 * {@link Spliterator#ORDERED ORDERED} and SEQUENTIAL.
+	 */
+	public static LongStream asStream(PrimitiveIterator.OfLong iterator) {
+		Spliterator.OfLong spliterator = Spliterators.spliteratorUnknownSize(iterator,
+				Spliterator.IMMUTABLE | Spliterator.ORDERED);
+		return StreamSupport.longStream(spliterator, false);
 	}
 }
