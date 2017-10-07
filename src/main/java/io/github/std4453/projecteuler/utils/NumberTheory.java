@@ -58,4 +58,8 @@ public class NumberTheory {
 		return false;
 		// TODO: implement a fast algorithm
 	}
+
+	public static IntFactorized factorize(int n) {
+		return new IntFactorized(n);
+	}
 }

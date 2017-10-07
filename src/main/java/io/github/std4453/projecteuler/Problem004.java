@@ -3,7 +3,10 @@ package io.github.std4453.projecteuler;
 import java.util.stream.IntStream;
 
 /**
- *
+ * Problem #4: Largest palindrome product<br />
+ * A palindromic number reads the same both ways. The largest palindrome made from the
+ * product of two 2-digit numbers is 9009 = 91 × 99.<br />
+ * Find the largest palindrome made from the product of two 3-digit numbers.
  */
 public class Problem004 {
 	private static final int DIGITS = 4;
