@@ -58,7 +58,7 @@ public class IntFactorized implements Iterable<Map.Entry<Integer, Integer>> {
 
 				int sqrt = (int) Math.round(Math.sqrt(num));  // calculate max
 				// NOTE THE "!" UNDER HERE!
-				if (!limitUntil(NumberTheory.intPrimesStream(),  // all primes
+				if (!limitUntil(Primes.intPrimesStream(),  // all primes
 						p -> p > sqrt)  // less than or equal to sqrt(num)
 						.filter(p -> num % p == 0)  // that can divide num
 						.peek(p -> {  // calculate exponent

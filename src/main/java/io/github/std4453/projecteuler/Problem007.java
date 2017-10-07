@@ -1,6 +1,6 @@
 package io.github.std4453.projecteuler;
 
-import io.github.std4453.projecteuler.utils.NumberTheory;
+import io.github.std4453.projecteuler.utils.Primes;
 
 /**
  * Problem #7: 10001st prime<br />
@@ -12,7 +12,7 @@ public class Problem007 {
 	private static final int N = 10001;
 
 	public static void main(String[] args) {
-		NumberTheory.intPrimesStream()  // all primes
+		Primes.intPrimesStream()  // all primes
 				.skip(N - 1)  // the Nth
 				.findFirst()  // find it
 				.ifPresent(System.out::println);

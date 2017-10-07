@@ -2,6 +2,9 @@ package io.github.std4453.projecteuler.utils;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.LongStream;
+
+import static io.github.std4453.projecteuler.utils.StreamUtils.asStream;
 
 /**
  * An {@code long} version of {@link ArrayList}, storing values as {@code longs} instead
@@ -1374,4 +1377,10 @@ public class LongArrayList extends AbstractList<Long>
 	//		}
 	//		modCount++;
 	//	}
+
+	/* SUPPLEMENTARY METHODS */
+
+	public LongStream longStream() {
+		return asStream(this.longIterator());
+	}
 }

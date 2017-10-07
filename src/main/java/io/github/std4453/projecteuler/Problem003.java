@@ -1,6 +1,6 @@
 package io.github.std4453.projecteuler;
 
-import io.github.std4453.projecteuler.utils.NumberTheory;
+import io.github.std4453.projecteuler.utils.Primes;
 
 import static io.github.std4453.projecteuler.utils.StreamUtils.limitUntil;
 
@@ -29,7 +29,7 @@ public class Problem003 {
 
 	public static void main(String[] args) {
 		long sqrt = Math.round(Math.sqrt(N));  // square root
-		System.out.println(limitUntil(NumberTheory.longPrimesStream(),  // all primes
+		System.out.println(limitUntil(Primes.longPrimesStream(),  // all primes
 				n -> n > sqrt)  // less than square root
 				.filter(n -> N % n == 0)  // that can divide N
 				.peek(p -> {

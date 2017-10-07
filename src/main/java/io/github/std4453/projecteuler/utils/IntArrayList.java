@@ -2,6 +2,9 @@ package io.github.std4453.projecteuler.utils;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.IntStream;
+
+import static io.github.std4453.projecteuler.utils.StreamUtils.asStream;
 
 /**
  * An {@code int} version of {@link ArrayList}, storing values as {@code ints} instead
@@ -1374,4 +1377,13 @@ public class IntArrayList extends AbstractList<Integer>
 	//		}
 	//		modCount++;
 	//	}
+
+	/* SUPPLEMENTARY METHODS */
+
+	/**
+	 * Returns an {@link IntStream} representing the content of this {@link IntArrayList}.
+	 */
+	public IntStream intStream() {
+		return asStream(this.intIterator());
+	}
 }
