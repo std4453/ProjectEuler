@@ -1,10 +1,7 @@
 package io.github.std4453.projecteuler.utils;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.IntPredicate;
-import java.util.function.LongPredicate;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -200,6 +197,168 @@ public class StreamUtils {
 		}
 	}
 
+	private static class AdjacentStreamIterator<T, U> implements Iterator<U> {
+		private Iterator<T> iterator;
+		private BiFunction<T, T, U> fn;
+
+		private boolean hasNext;
+		private T src1, src2;
+		private U calculated;
+
+		AdjacentStreamIterator(Stream<T> stream, BiFunction<T, T, U> fn) {
+			this.iterator = stream.iterator();
+			this.fn = fn;
+
+			this.prefetch();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.hasNext;
+		}
+
+		@Override
+		public U next() {
+			if (!this.hasNext) throw new NoSuchElementException();
+			U value = this.calculated;
+			this.update();
+			return value;
+		}
+
+		private void prefetch() {
+			if (!this.checkNext()) return;
+			this.src1 = iterator.next();
+			this.fetchSrc2AndCalculate();
+		}
+
+		private void update() {
+			if (!this.checkNext()) return;
+			this.src1 = this.src2;
+			this.fetchSrc2AndCalculate();
+		}
+
+		private void fetchSrc2AndCalculate() {
+			if (!this.checkNext()) return;
+			this.src2 = iterator.next();
+			this.calculated = this.fn.apply(this.src1, this.src2);
+			this.hasNext = true;
+		}
+
+		private boolean checkNext() {
+			return this.hasNext = this.iterator.hasNext();
+		}
+	}
+
+	/**
+	 * {@code int} version of {@link AdjacentStreamIterator}.
+	 */
+	private static class IntAdjacentIterator implements PrimitiveIterator.OfInt {
+		private OfInt iterator;
+		private IntBinaryOperator fn;
+
+		private boolean hasNext;
+		private int src1, src2;
+		private int calculated;
+
+		IntAdjacentIterator(IntStream stream, IntBinaryOperator fn) {
+			this.iterator = stream.iterator();
+			this.fn = fn;
+
+			this.prefetch();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.hasNext;
+		}
+
+		@Override
+		public int nextInt() {
+			if (!this.hasNext) throw new NoSuchElementException();
+			int value = this.calculated;
+			this.update();
+			return value;
+		}
+
+		private void prefetch() {
+			if (!this.checkNext()) return;
+			this.src1 = iterator.next();
+			this.fetchSrc2AndCalculate();
+		}
+
+		private void update() {
+			if (!this.checkNext()) return;
+			this.src1 = this.src2;
+			this.fetchSrc2AndCalculate();
+		}
+
+		private void fetchSrc2AndCalculate() {
+			if (!this.checkNext()) return;
+			this.src2 = iterator.next();
+			this.calculated = this.fn.applyAsInt(this.src1, this.src2);
+			this.hasNext = true;
+		}
+
+		private boolean checkNext() {
+			return this.hasNext = this.iterator.hasNext();
+		}
+	}
+
+	/**
+	 * {@code long} version of {@link AdjacentStreamIterator}.
+	 */
+	private static class LongAdjacentIterator implements PrimitiveIterator.OfLong {
+		private OfLong iterator;
+		private LongBinaryOperator fn;
+
+		private boolean hasNext;
+		private long src1, src2;
+		private long calculated;
+
+		LongAdjacentIterator(LongStream stream, LongBinaryOperator fn) {
+			this.iterator = stream.iterator();
+			this.fn = fn;
+
+			this.prefetch();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.hasNext;
+		}
+
+		@Override
+		public long nextLong() {
+			if (!this.hasNext) throw new NoSuchElementException();
+			long value = this.calculated;
+			this.update();
+			return value;
+		}
+
+		private void prefetch() {
+			if (!this.checkNext()) return;
+			this.src1 = iterator.next();
+			this.fetchSrc2AndCalculate();
+		}
+
+		private void update() {
+			if (!this.checkNext()) return;
+			this.src1 = this.src2;
+			this.fetchSrc2AndCalculate();
+		}
+
+		private void fetchSrc2AndCalculate() {
+			if (!this.checkNext()) return;
+			this.src2 = iterator.next();
+			this.calculated = this.fn.applyAsLong(this.src1, this.src2);
+			this.hasNext = true;
+		}
+
+		private boolean checkNext() {
+			return this.hasNext = this.iterator.hasNext();
+		}
+	}
+
 	/**
 	 * Return a {@link Stream} which is the merges the elements of two
 	 * {@link Stream Streams}.<br />
@@ -247,7 +406,7 @@ public class StreamUtils {
 	 * Return a part of the given {@link Stream} starting at its first element and
 	 * ending at the first element in {@code s} that satisfies {@link Predicate} {@code
 	 * p} (exclusive).<br />
-	 * his methods runs a <i>terminal operation</i> on the given stream.<br />
+	 * This methods runs a <i>terminal operation</i> on the given stream.<br />
 	 * The returned {@link Stream} is <i>SEQUENTIAL</i>.
 	 */
 	public static <T> Stream<T> limitUntil(Stream<T> s, Predicate<T> p) {
@@ -270,6 +429,35 @@ public class StreamUtils {
 	 */
 	public static LongStream limitUntil(LongStream s, LongPredicate p) {
 		return asStream(new LongLimitUntilIterator(s, p));
+	}
+
+	/**
+	 * Return a {@link Stream} representing the result of executing a function {@code
+	 * fn} on every 2 adjacent elements in {@link Stream} {@code s}.<br />
+	 * This methods runs a <i>terminal operation</i> on the given stream.<br />
+	 * The returned {@link Stream} is <i>SEQUENTIAL</i>.
+	 */
+	public static <T, U> Stream<U> calcAdjacent(
+			Stream<T> s, BiFunction<T, T, U> fn) {
+		return asStream(new AdjacentStreamIterator<>(s, fn));
+	}
+
+	/**
+	 * {@code int} version of {@link #calcAdjacent(Stream, BiFunction)}.
+	 *
+	 * @see #calc(Stream, Stream, BiFunction)
+	 */
+	public static IntStream calcAdjacent(IntStream s, IntBinaryOperator fn) {
+		return asStream(new IntAdjacentIterator(s, fn));
+	}
+
+	/**
+	 * {@code long} version of {@link #calcAdjacent(Stream, BiFunction)}.
+	 *
+	 * @see #calc(Stream, Stream, BiFunction)
+	 */
+	public static LongStream calcAdjacent(LongStream s, LongBinaryOperator fn) {
+		return asStream(new LongAdjacentIterator(s, fn));
 	}
 
 	/**
