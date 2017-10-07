@@ -172,6 +172,10 @@ public class LongFactorized implements Iterable<Map.Entry<Long, Integer>> {
 		return this.factors.entrySet().stream();
 	}
 
+	public Stream<Integer> expoStream() {
+		return this.factors.values().stream();
+	}
+
 	/**
 	 * Creates a new {@link LongFactorized} representing the given integer.<br />
 	 * {@code n} must be positive, otherwise {@code null} is returned.
