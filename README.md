@@ -26,6 +26,8 @@ In every `ProblemXXX` class, the `public static void main(String[] args)` method
    
 In the code there will be comments starting with `//` explaining how was the problem solved and why was the code written in this way. 
 
+After the program that solves the problem, the correct answer is given and the time complexity of the problem is calculated. After that, I usually write several homework problems, which are either problems I met or interesting ideas I come up with while solving this problem. They are mostly about more programming than maths, trying to get the reader (and also myself) a better understanding of the Java 8 Stream API.  
+
 ## Something more
 
 I admit that I'm not very strong in maths. As a programmer, I often tend to solve difficult problems using brute force and the computer does the remaining things for me. Sometimes I simply got tired of maths and want to sink into my so-called comfort zone. Thus, some solutions I give might seem funny and clumsy and stupid. However it will work (I hope). I review my solution from time to time and sometimes when I've found a better solution I might rewrite the previous code. So now, my friend, forgive me for releasing bad answers by this moment - it will get better sooner or later.  
