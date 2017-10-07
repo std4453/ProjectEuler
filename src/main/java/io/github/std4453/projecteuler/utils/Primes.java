@@ -12,6 +12,8 @@ import java.util.stream.LongStream;
  *
  */
 public class Primes {
+	// TODO: improve speed of intPrimesStream() and longPrimesStream()
+
 	/**
 	 * Construct a new {@link IntStream} containing all the primes.
 	 */

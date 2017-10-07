@@ -17,6 +17,8 @@ public class Problem005 {
 	private static final int END_INCLUSIVE = 20;
 
 	public static void main(String[] args) {
+		// TODO: use a better algorithm
+
 		IntStream.rangeClosed(START_INCLUSIVE, END_INCLUSIVE)  // numbers
 				.mapToObj(NumberTheory::factorize)  // factorize them
 				.reduce(IntFactorized::newLCM)  // calculate LCM
