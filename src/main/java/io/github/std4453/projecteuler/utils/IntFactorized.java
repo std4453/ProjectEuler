@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static io.github.std4453.projecteuler.utils.StreamUtils.limitUntil;
@@ -18,8 +17,12 @@ import static io.github.std4453.projecteuler.utils.StreamUtils.limitUntil;
 public class IntFactorized implements Iterable<Map.Entry<Integer, Integer>> {
 	private TreeMap<Integer, Integer> factors;
 
+	private IntFactorized(TreeMap<Integer, Integer> factors) {
+		this.factors = factors;
+	}
+
 	private IntFactorized() {
-		this.factors = new TreeMap<>();
+		this(new TreeMap<>());
 	}
 
 	public IntFactorized(int n) {
@@ -50,7 +53,7 @@ public class IntFactorized implements Iterable<Map.Entry<Integer, Integer>> {
 
 			@Override
 			public void run() {
-				// Here the factorization algorithm behaves similar to the answer of
+				// Here the factorization algorithm behaves similarly to the answer of
 				// Problem #3. Therefore see comments in Problem003 for more details.
 
 				int sqrt = (int) Math.round(Math.sqrt(num));  // calculate max
@@ -81,10 +84,9 @@ public class IntFactorized implements Iterable<Map.Entry<Integer, Integer>> {
 	 * applications should cache the result if is to be used many times.
 	 */
 	public int getNumber() {
-		return this.stream().flatMapToInt(factor -> {  // map factor to multipliers
-			int key = factor.getKey();
-			return IntStream.generate(() -> key).limit(factor.getValue());
-		}).reduce(1, (a, b) -> a * b);  // multiple them
+		return this.stream().mapToInt(factor ->  // map factor to power
+				MathsHelper.pow(factor.getKey(), factor.getValue()))
+				.reduce(1, (a, b) -> a * b);  // multiply them
 	}
 
 	/**
@@ -134,6 +136,13 @@ public class IntFactorized implements Iterable<Map.Entry<Integer, Integer>> {
 		});
 	}
 
+	/**
+	 * Return the amount of prime factors this {@link IntFactorized} contains;
+	 */
+	public int size() {
+		return this.factors.size();
+	}
+
 	@Override
 	public String toString() {
 		// convert factors to form of p1^k2*p2^k2...
@@ -152,12 +161,55 @@ public class IntFactorized implements Iterable<Map.Entry<Integer, Integer>> {
 	}
 
 	/**
+	 * Creates a new {@link IntFactorized} representing the given integer.<br />
+	 * {@code n} must be positive, otherwise {@code null} is returned.
+	 */
+	public static IntFactorized of(int n) {
+		if (n <= 0) return null;
+		return new IntFactorized(n);
+	}
+
+	/**
 	 * Create a new {@link IntFactorized} to represent the <i>least common multiple</i>
 	 * of {@code a} and {@code b} without changing the contents of them.
 	 */
 	public static IntFactorized newLCM(IntFactorized a, IntFactorized b) {
+		Objects.requireNonNull(a);
+		Objects.requireNonNull(b);
 		IntFactorized result = new IntFactorized(a);
 		result.lcm(b);
 		return result;
+	}
+
+	/**
+	 * Create a new {@link IntFactorized} to represent the multiplication
+	 * of {@code a} and {@code b} without changing the contents of them.
+	 */
+	public static IntFactorized newMult(IntFactorized a, IntFactorized b) {
+		Objects.requireNonNull(a);
+		Objects.requireNonNull(b);
+		IntFactorized result = new IntFactorized(a);
+		result.mult(b);
+		return result;
+	}
+
+	/**
+	 * Create a new {@link IntFactorized} to represent the division of {@code a} and
+	 * {@code b} without changing the contents of them.<br />
+	 * If {@code a} is not dividable by {@code b}, {@code null} is returned.
+	 */
+	public static IntFactorized divide(IntFactorized a, IntFactorized b) {
+		Objects.requireNonNull(a);
+		Objects.requireNonNull(b);
+
+		TreeMap<Integer, Integer> divided = new TreeMap<>(a.factors);
+		for (Map.Entry<Integer, Integer> factor : b) {
+			Integer base = factor.getKey();
+			int expo = factor.getValue();
+			if (!divided.containsKey(base) || expo > divided.get(base)) return null;
+			divided.put(base, divided.get(base) - expo);
+		}
+
+		return new IntFactorized(divided);
 	}
 }

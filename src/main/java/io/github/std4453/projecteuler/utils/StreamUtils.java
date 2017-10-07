@@ -251,7 +251,7 @@ public class StreamUtils {
 	 * The returned {@link Stream} is <i>SEQUENTIAL</i>.
 	 */
 	public static <T> Stream<T> limitUntil(Stream<T> s, Predicate<T> p) {
-		return asStream(new LimitUntilIterator<T>(s, p));
+		return asStream(new LimitUntilIterator<>(s, p));
 	}
 
 	/**
