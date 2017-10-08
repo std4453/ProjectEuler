@@ -82,7 +82,8 @@ public class Primes {
 	 * Generate a {@link IntArrayList} containing all the primes under {@code max}.<br />
 	 * The program uses the <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes"><i>Sieve
 	 * of Eratosthenes</i></a> to generate the demanded primes, with complexity {@code
-	 * O(n * log(n) * log(log(n)))}.
+	 * O(n * log(n) * log(log(n)))}.<br />
+	 * This method requires spacial complexity {@code O(n)}.
 	 */
 	public static IntArrayList sievePrimesInt(int max) {
 		IntArrayList primes = new IntArrayList();
@@ -92,6 +93,29 @@ public class Primes {
 			if (!notPrime[i]) {
 				for (int j = i * 2; j < max; j += i) notPrime[j] = true;
 				primes.add(i);
+			}
+		return primes;
+	}
+
+	/**
+	 * The {@code long} version of {@link #sievePrimesInt(int)}.<br />
+	 * Note that since this method requires {@code O(n)} space and applying for amount
+	 * of memory that can only be described by a {@code long} is unrealistic, this
+	 * method still takes an {@code int max} instead of a {@code long max} as input.
+	 * Therefore, it should be used only to save the effort (and time) converting the
+	 * return value of {@link #sievePrimesInt(int)} from {@link IntArrayList} to
+	 * {@link LongArrayList}.
+	 *
+	 * @see #sievePrimesInt(int)
+	 */
+	public static LongArrayList sievePrimesLong(int max) {
+		LongArrayList primes = new LongArrayList();
+		boolean[] notPrime = new boolean[max];
+		notPrime[0] = notPrime[1] = true;
+		for (int i = 0; i < max; ++i)
+			if (!notPrime[i]) {
+				for (int j = i * 2; j < max; j += i) notPrime[j] = true;
+				primes.add((long) i);
 			}
 		return primes;
 	}

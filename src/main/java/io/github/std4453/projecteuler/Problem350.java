@@ -2,8 +2,7 @@ package io.github.std4453.projecteuler;
 
 import io.github.std4453.projecteuler.utils.Primes;
 
-import java.util.TreeMap;
-import java.util.stream.LongStream;
+import java.util.Arrays;
 
 import static io.github.std4453.projecteuler.utils.MathsHelper.pow;
 
@@ -34,51 +33,44 @@ public class Problem350 {
 	}
 
 	public static void main(String[] args) {
-		long maxTimes = M / L;
+		long start = System.currentTimeMillis();
 
-		int maxK = (int) Math.round(Math.log(maxTimes) / Math.log(2));
-		long[] phiCache = buildPhiCache(maxK);
-		System.out.println("Phi cache built.");
+		int maxTimes = (int) (M / L);
 
-		TreeMap<Integer, Integer>[] factorized = buildFactorizedCache((int) maxTimes);
-		System.out.println("Factorized cache built.");
+		long[] thetaCache = buildThetaCache(maxTimes);
+		System.out.println("Theta cache built.");
 
-		LongStream.rangeClosed(1, maxTimes)
-				.map(i -> {
-					long coeff = (M / i - L + 1) % MOD;
-					long theta = factorized[(int) i]
-							.values()
-							.stream()
-							.mapToLong(k -> phiCache[k])
-							.reduce(Problem350::modMult)
-							.orElse(phiCache[0]);
-					return modMult(coeff, theta);
-				}).reduce(Problem350::modAdd)
-				.ifPresent(System.out::println);
+		long sum = 0;
+		for (int i = 1; i <= maxTimes; ++i)
+			sum = modAdd(sum, modMult(modAbs(M / i - L + 1), thetaCache[i]));
+		System.out.println(sum);
+
+		long end = System.currentTimeMillis();
+		System.out.printf("Time consumed: %dms\n", end - start);
 
 		// Answer: 84664213
 		// TODO: add explanations
 	}
 
-	@SuppressWarnings("unchecked")
-	private static TreeMap<Integer, Integer>[] buildFactorizedCache(int _max) {
-		final int max = _max + 1;
+	private static long[] buildThetaCache(int max) {
+		int maxK = (int) Math.round(Math.log(max) / Math.log(2));
+		long[] phiCache = buildPhiCache(maxK);
+		System.out.println("Phi cache built.");
 
-		int[] primes = Primes.sievePrimesInt(max).toIntArray();
-		TreeMap<Integer, Integer>[] factorized = new TreeMap[max];
-		for (int i = 0; i < max; ++i) factorized[i] = new TreeMap<>();
-
-		for (int i = 0; i < primes.length; ++i) {
-			int prime = primes[i];
-			for (int n = prime, j = 1; n < max; ++j, n += prime) {
-				TreeMap<Integer, Integer> parent = factorized[j];
-				if (parent.containsKey(i))
-					factorized[n].put(i, parent.get(i) + 1);
-				else factorized[n].put(i, 1);
-			}
+		long[] cache = new long[max + 1];
+		Arrays.fill(cache, phiCache[0]);
+		int[] minPrimeFactor = new int[max + 1];
+		int[] primes = Primes.sievePrimesInt(max + 1).toIntArray();
+		for (int p : primes)
+			for (int n = p, j = 1; n <= max; ++j, n += p) minPrimeFactor[n] = p;
+		for (int i = 2; i <= max; ++i) {
+			int j = i;
+			int minP = minPrimeFactor[j];
+			int expo = 0;
+			for (; j % minP == 0; j /= minP) ++expo;
+			cache[i] = modMult(modMult(cache[i], phiCache[expo]), cache[j]);
 		}
-
-		return factorized;
+		return cache;
 	}
 
 	private static long[] buildPhiCache(int maxK) {

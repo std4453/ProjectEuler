@@ -8,6 +8,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.github.std4453.projecteuler.utils.MathsHelper.pow;
 import static io.github.std4453.projecteuler.utils.StreamUtils.limitUntil;
 
 /**
@@ -17,6 +18,19 @@ import static io.github.std4453.projecteuler.utils.StreamUtils.limitUntil;
 public class LongFactorized implements Iterable<Map.Entry<Long, Integer>> {
 	private TreeMap<Long, Integer> factors;
 
+	/**
+	 * Constructor that uses the content of the given {@link Map} as
+	 * {@code this.factors}. In order to accelerate further operations, the given
+	 * {@link Map} is converted into a {@link TreeMap}.
+	 */
+	public LongFactorized(Map<Long, Integer> factors) {
+		this.factors = new TreeMap<>(factors);
+	}
+
+	/**
+	 * Constructor that uses the given {@link TreeMap} as {@code this.factors} directly.
+	 * <br />This method should be called only internally.
+	 */
 	private LongFactorized(TreeMap<Long, Integer> factors) {
 		this.factors = factors;
 	}
@@ -97,8 +111,24 @@ public class LongFactorized implements Iterable<Map.Entry<Long, Integer>> {
 	 */
 	public long getNumberOfDivisors() {
 		// given exponents k1, k2 ... kn, there are (k1 + 1)(k2 + 1)...(kn + 1) divisors
-		return this.stream().mapToLong(factor -> factor.getValue() + 1)
+		return this.factors.values().stream().mapToLong(n -> n + 1)
 				.reduce(1, (a, b) -> a * b);  // multiply them
+	}
+
+	/**
+	 * Return the sum of divisors of the number represented by this
+	 * {@link LongFactorized}.<br />
+	 * Note that the number is dynamically calculated using the factors, therefore
+	 * applications should cache the result if is to be used many times.
+	 */
+	public long getSumOfDivisors() {
+		// if n = p1^k1 * p2^k2 * ... * pn^kn, sum of its divisors would be
+		// (1 + p1^1 + p1^2 + ... + p1^k1) * (1 + p2^1 + p2^2 + ... + p2^k2) *
+		// ... * (1 + pn^1 + pn^2 + ... + p1^kn)
+		// and that (1 + p1^1 + p1^2 + ... + p1^k1) = (p1^(k1 + 1) - 1) / (p1 - 1)
+		return this.stream().mapToLong(factor ->
+				(pow(factor.getKey(), factor.getValue() + 1) - 1) / (factor.getKey() - 1))
+				.reduce(1, (a, b) -> a * b);
 	}
 
 	/**
