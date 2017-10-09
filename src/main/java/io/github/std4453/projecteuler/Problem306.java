@@ -47,7 +47,7 @@ public class Problem306 {
 		System.out.printf("The final answer is %d\n", count);
 
 		// Runs for about 22 minutes on my computer.
-		// The program outputs the current program every 10000 iterations, therefore
+		// The program outputs the current progress every 10000 iterations, therefore
 		// please be patient and wait until it terminates.
 
 		// Answer: 852938
