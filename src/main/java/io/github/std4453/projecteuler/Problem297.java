@@ -101,7 +101,7 @@ public class Problem297 {
 
 		// Homework:
 		// 1. Prove that "Every positive integer can be uniquely written as a sum of
-		// nonconsecutive terms of theFibonacci sequence".
+		// nonconsecutive terms of the Fibonacci sequence".
 
 		// 2. Prove that:
 		// phi(n) = (1 / 5) * (n - 1/sqrt(5)) * ((1 + sqrt(5)) / 2)^n +
