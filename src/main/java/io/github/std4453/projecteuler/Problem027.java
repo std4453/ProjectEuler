@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import static io.github.std4453.projecteuler.utils.StreamUtils.limitUntil;
 
 /**
+ * Problem #27: Quadratic primes<br />
  * Euler discovered the remarkable quadratic formula:<br />
  * {@code n^2 + n + 41}<br />
  * It turns out that the formula will produce 40 primes for the consecutive integer
