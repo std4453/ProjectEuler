@@ -8,3 +8,6 @@ build
 # Other files
 assets
 cache
+
+# Unfinished Problems
+/src/main/java/io/github/std4453/projecteuler/unfinished
